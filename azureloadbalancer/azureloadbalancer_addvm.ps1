@@ -70,26 +70,43 @@ $frontendPort = $vmIndex + "0022"
 #*******************************************************************#
 
 # 获取虚拟网络的实例
-$vnet = Get-AzureRmVirtualNetwork -Name $vnetName -ResourceGroupName $rgName
+$vnet = Get-AzureRmVirtualNetwork -Name $vnetName `
+                                  -ResourceGroupName $rgName
 # 获取虚拟子网的实例
-$backendSubnet = Get-AzureRmVirtualNetworkSubnetConfig -Name $subnetName -VirtualNetwork $vnet
+$backendSubnet = Get-AzureRmVirtualNetworkSubnetConfig `
+                 -Name $subnetName `
+                 -VirtualNetwork $vnet
 
 
 #*******************************************************************#
 # 获取 Load Balancer 及其子属性的实例
 #*******************************************************************#
-$loadbalancer = Get-AzureRmLoadBalancer -Name $lbName -ResourceGroupName $rgName
+$loadbalancer = Get-AzureRmLoadBalancer -Name $lbName `
+                                        -ResourceGroupName $rgName
 
 # 获取 Load Balancer 的 Backend pools 实例
-$backendpoolipv4 = Get-AzureRmLoadBalancerBackendAddressPoolConfig -Name $backendAddressPoolV4Name -LoadBalancer $loadbalancer
-$backendpoolipv6 = Get-AzureRmLoadBalancerBackendAddressPoolConfig -Name $backendAddressPoolV6Name -LoadBalancer $loadbalancer
+$backendpoolipv4 = Get-AzureRmLoadBalancerBackendAddressPoolConfig `
+                   -Name $backendAddressPoolV4Name `
+                   -LoadBalancer $loadbalancer
+$backendpoolipv6 = Get-AzureRmLoadBalancerBackendAddressPoolConfig `
+                   -Name $backendAddressPoolV6Name `
+                   -LoadBalancer $loadbalancer
 
 # 获取 Load Balancer 的 Frontend IP 实例
-$FEIPConfigv4 = Get-AzureRmLoadBalancerFrontendIpConfig -Name $frontendV4Name -LoadBalancer $loadbalancer
-$FEIPConfigv6 = Get-AzureRmLoadBalancerFrontendIpConfig -Name $frontendV6Name -LoadBalancer $loadbalancer
+$FEIPConfigv4 = Get-AzureRmLoadBalancerFrontendIpConfig `
+                -Name $frontendV4Name `
+                -LoadBalancer $loadbalancer
+$FEIPConfigv6 = Get-AzureRmLoadBalancerFrontendIpConfig `
+                -Name $frontendV6Name `
+                -LoadBalancer $loadbalancer
 
 # 在 Load Balancer 实例中添加新的 Inbound NAT rule
-$loadbalancer | Add-AzureRmLoadBalancerInboundNatRuleConfig -Name $natRulexV4Name -FrontendIPConfiguration $FEIPConfigv4 -Protocol TCP -FrontendPort $frontendPort -BackendPort 22
+$loadbalancer | Add-AzureRmLoadBalancerInboundNatRuleConfig `
+                -Name $natRulexV4Name `
+                -FrontendIPConfiguration $FEIPConfigv4 `
+                -Protocol TCP `
+                -FrontendPort $frontendPort `
+                -BackendPort 22
 
 
 #*******************************************************************#
@@ -100,16 +117,32 @@ $loadbalancer | Add-AzureRmLoadBalancerInboundNatRuleConfig -Name $natRulexV4Nam
 $loadbalancer | Set-AzureRmLoadBalancer
 
 # 获得更新后的 Load Balancer 实例
-$loadbalancer = Get-AzureRmLoadBalancer -Name $lbName -ResourceGroupName $rgName
-$inboundNATRulev4 = Get-AzureRmLoadBalancerInboundNatRuleConfig -Name $natRulexV4Name -LoadBalancer $loadbalancer
+$loadbalancer = Get-AzureRmLoadBalancer `
+                -Name $lbName `
+                -ResourceGroupName $rgName
+$inboundNATRulev4 = Get-AzureRmLoadBalancerInboundNatRuleConfig `
+                    -Name $natRulexV4Name `
+                    -LoadBalancer $loadbalancer
 
 
 #*******************************************************************#
 # 创建虚拟网卡
 #*******************************************************************#
-$nicIPv4 = New-AzureRmNetworkInterfaceIpConfig -Name "IPv4IPConfig" -PrivateIpAddressVersion "IPv4" -Subnet $backendSubnet -LoadBalancerBackendAddressPool $backendpoolipv4 -LoadBalancerInboundNatRule $inboundNATRulev4
-$nicIPv6 = New-AzureRmNetworkInterfaceIpConfig -Name "IPv6IPConfig" -PrivateIpAddressVersion "IPv6" -LoadBalancerBackendAddressPool $backendpoolipv6
-$nic = New-AzureRmNetworkInterface -Name $nicxName -IpConfiguration $nicIPv4,$nicIPv6 -ResourceGroupName $rgName -Location $location
+$nicIPv4 = New-AzureRmNetworkInterfaceIpConfig `
+           -Name "IPv4IPConfig" `
+           -PrivateIpAddressVersion "IPv4" `
+           -Subnet $backendSubnet `
+           -LoadBalancerBackendAddressPool $backendpoolipv4 `
+           -LoadBalancerInboundNatRule $inboundNATRulev4
+$nicIPv6 = New-AzureRmNetworkInterfaceIpConfig `
+           -Name "IPv6IPConfig" `
+           -PrivateIpAddressVersion "IPv6" `
+           -LoadBalancerBackendAddressPool $backendpoolipv6
+$nic = New-AzureRmNetworkInterface `
+       -Name $nicxName `
+       -IpConfiguration $nicIPv4,$nicIPv6 `
+       -ResourceGroupName $rgName `
+       -Location $location
 
 
 #*******************************************************************#
@@ -117,20 +150,49 @@ $nic = New-AzureRmNetworkInterface -Name $nicxName -IpConfiguration $nicIPv4,$ni
 #*******************************************************************#
 
 # 获取 Availability Set
-$availabilitySet = Get-AzureRmAvailabilitySet -Name $availabilitySetName -ResourceGroupName $rgName
+$availabilitySet = Get-AzureRmAvailabilitySet `
+                   -Name $availabilitySetName `
+                   -ResourceGroupName $rgName
 
 # 创建用户 Credential
-$securePassword = ConvertTo-SecureString $userPassword -AsPlainText -Force
-$userCred = New-Object System.Management.Automation.PSCredential ($userName, $securePassword)
+$securePassword = ConvertTo-SecureString $userPassword `
+                                         -AsPlainText -Force
+$userCred = New-Object System.Management.Automation.PSCredential `
+            ($userName, $securePassword)
 
 # 创建虚机
-$vm = New-AzureRmVMConfig -VMName $vmxName -VMSize $vmSize -AvailabilitySetId $availabilitySet.Id
-$vm = Set-AzureRmVMOperatingSystem -VM $vm -Linux -ComputerName $vmxComputerHostName -Credential $userCred -DisablePasswordAuthentication
-$vm = Set-AzureRmVMSourceImage -VM $vm -PublisherName Canonical -Offer UbuntuServer -Skus $vmVersion -Version "latest"
-$vm = Set-AzureRmVMBootDiagnostics -VM $vm -Disable
-$vm = Add-AzureRmVMNetworkInterface -VM $vm -Id $nic.Id -Primary
-$vm = Set-AzureRmVMOSDisk -VM $vm -Name $vmxDiskName -CreateOption FromImage -StorageAccountType $storageAccountTypeName
-Add-AzureRmVMSshPublicKey -VM $vm -KeyData $sshPublicKey -Path "/home/$userName/.ssh/authorized_keys"
-New-AzureRmVM -ResourceGroupName $rgName -Location $location -VM $vm
+$vm = New-AzureRmVMConfig -VMName $vmxName `
+                          -VMSize $vmSize `
+                          -AvailabilitySetId $availabilitySet.Id
+$vm = Set-AzureRmVMOperatingSystem `
+      -VM $vm `
+      -Linux `
+      -ComputerName $vmxComputerHostName `
+      -Credential $userCred `
+      -DisablePasswordAuthentication
+$vm = Set-AzureRmVMSourceImage `
+      -VM $vm `
+      -PublisherName Canonical `
+      -Offer UbuntuServer `
+      -Skus $vmVersion `
+      -Version "latest"
+$vm = Set-AzureRmVMBootDiagnostics `
+      -VM $vm `
+      -Disable
+$vm = Add-AzureRmVMNetworkInterface `
+      -VM $vm `
+      -Id $nic.Id -Primary
+$vm = Set-AzureRmVMOSDisk `
+      -VM $vm `
+      -Name $vmxDiskName `
+      -CreateOption FromImage `
+      -StorageAccountType $storageAccountTypeName
+Add-AzureRmVMSshPublicKey `
+    -VM $vm `
+    -KeyData $sshPublicKey `
+    -Path "/home/$userName/.ssh/authorized_keys"
+New-AzureRmVM -ResourceGroupName $rgName `
+              -Location $location `
+              -VM $vm
 
 Write-Host "Adding VM to Load Balancer is completed."
