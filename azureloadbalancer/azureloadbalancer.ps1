@@ -97,10 +97,10 @@ $backendSubnet = New-AzureRmVirtualNetworkSubnetConfig `
                  -Name $subnetName `
                  -AddressPrefix $subnetPrefix
 $vnet = New-AzureRmvirtualNetwork -Name $vnetName `
-		                          -ResourceGroupName $rgName `
-		                          -Location $location `
-		                          -AddressPrefix $vnetPrefix `
-		                          -Subnet $backendSubnet
+                                  -ResourceGroupName $rgName `
+                                  -Location $location `
+                                  -AddressPrefix $vnetPrefix `
+                                  -Subnet $backendSubnet
 
 
 #*******************************************************************#
