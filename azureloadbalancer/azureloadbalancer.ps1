@@ -19,14 +19,7 @@ $lowerProdNamePrefix = $prodNamePrefix.ToLower()
 # vm user name
 $userName = "nick"
 # vm user public key
-$sshPublicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCzO/q7SCCTd`
-                Pou/Pj/IYyUXk1f1gQ5yhc1werRvivcSRDCnGPXnF3VaiuLdmX`
-		        sbPscZBQ83wAs2rMZ8zEMDsSO+OGJcuQdJd7yuCfhwQ7ugasmh`
-		        J9PhxGK865HBY9iMJBE1cVyA6pZ2bKRLlNB375UB4NoFJkc4Nx`
-		        svpl0RunfD+YjupGDeFGrgGklgZAqb/DXY+zzvEIW6VUdWTpRY`
-		        mP5DV6/hF4pBDB+ItA+eYi8BqJr8OSW/QUZsTe/9edOM1acHQi`
-		        0HdZWpwSNT3xR75D4gGGdQOtRoj+EdapZtW3oUdkce3zKVWiMH`
-		        q1dK601Lzz5UUU+VNRp4aKWP7AWHxp/ nick@u16os"
+$sshPublicKey = "your public key"
 
 # resource loacation
 $location = "japaneast"
@@ -102,12 +95,12 @@ New-AzureRmResourceGroup -Name $rgName -location $location
 # 虚拟网络及其虚拟子网
 $backendSubnet = New-AzureRmVirtualNetworkSubnetConfig `
                  -Name $subnetName `
-				 -AddressPrefix $subnetPrefix
+                 -AddressPrefix $subnetPrefix
 $vnet = New-AzureRmvirtualNetwork -Name $vnetName `
 		                          -ResourceGroupName $rgName `
-								  -Location $location `
-								  -AddressPrefix $vnetPrefix `
-								  -Subnet $backendSubnet
+		                          -Location $location `
+		                          -AddressPrefix $vnetPrefix `
+		                          -Subnet $backendSubnet
 
 
 #*******************************************************************#
