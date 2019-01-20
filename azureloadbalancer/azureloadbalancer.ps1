@@ -1,10 +1,18 @@
 <#-----------------------------------------------------------------#>
-<# 功能：                                                           #>
-<# 在 Azure 上创建包含 n 台后端虚机的 load balancer                    #>
-<# 用法：                                                           #>
-<# 直接执行脚本 .\azureloadbalancer.ps1                              #>
+<# 功能：                                                          #>
+<# 在 Azure 上创建包含两台后端虚机的 load balancer                 #>
+<# 说明：                                                          #>
+<# 请根据情况修改变量 prodNamePrefix、userName、sshPublicKey 和    #>
+<# location 等变量的值                                             #>
+<# 用法：                                                          #>
+<# 直接执行脚本 .\azureloadbalancer.ps1                            #>
 <#-----------------------------------------------------------------#>
 
+#*******************************************************************#
+# 定义脚本中所需的变量
+#*******************************************************************#
+
+# 资源名称的前缀
 $prodNamePrefix = "Nick"
 $lowerProdNamePrefix = $prodNamePrefix.ToLower()
 
@@ -13,13 +21,16 @@ $userName = "nick"
 # vm user public key
 $sshPublicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCzO/q7SCCTdPou/Pj/IYyUXk1f1gQ5yhc1werRvivcSRDCnGPXnF3VaiuLdmXsbPscZBQ83wAs2rMZ8zEMDsSO+OGJcuQdJd7yuCfhwQ7ugasmhJ9PhxGK865HBY9iMJBE1cVyA6pZ2bKRLlNB375UB4NoFJkc4Nxsvpl0RunfD+YjupGDeFGrgGklgZAqb/DXY+zzvEIW6VUdWTpRYmP5DV6/hF4pBDB+ItA+eYi8BqJr8OSW/QUZsTe/9edOM1acHQi0HdZWpwSNT3xR75D4gGGdQOtRoj+EdapZtW3oUdkce3zKVWiMHq1dK601Lzz5UUU+VNRp4aKWP7AWHxp/ nick@u16os"
 
-
+# resource loacation
 $location = "japaneast"
+# resource group name
 $rgName = $prodNamePrefix + "LBGroup"
+# virtual network infomation
 $vnetName = $prodNamePrefix + "LBVNet"
 $vnetPrefix = "10.0.0.0/16"
 $subnetName = $prodNamePrefix + "LBSubNet"
 $subnetPrefix = "10.0.0.0/24"
+# load balancer name
 $lbName = $prodNamePrefix + "LoadBalancer"
 
 # Azure 提供给 IP 地址的域名，格式为：$dnsLabelv4 + $location + cloudapp.azure.com
@@ -72,6 +83,7 @@ $vm1ComputerHostName = $lowerProdNamePrefix + "lbvm1"
 $vm2ComputerHostName = $lowerProdNamePrefix + "lbvm2"
 $storageAccountTypeName = "Standard_LRS"
 
+
 #*******************************************************************#
 # 创建 Resource Group、虚拟网络及其虚拟子网
 #*******************************************************************#
@@ -82,6 +94,7 @@ New-AzureRmResourceGroup -Name $rgName -location $location
 # 虚拟网络及其虚拟子网
 $backendSubnet = New-AzureRmVirtualNetworkSubnetConfig -Name $subnetName -AddressPrefix $subnetPrefix
 $vnet = New-AzureRmvirtualNetwork -Name $vnetName -ResourceGroupName $rgName -Location $location -AddressPrefix $vnetPrefix -Subnet $backendSubnet
+
 
 #*******************************************************************#
 # 创建 Load Balancer

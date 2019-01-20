@@ -1,11 +1,20 @@
 <#-----------------------------------------------------------------#>
-<# 功能：                                                           #>
-<# 在 Azure 上创建包含 n 台后端虚机的 load balancer                    #>
-<# 用法：                                                           #>
-<# 直接执行脚本 .\azureloadbalancer.ps1                              #>
+<# 功能：                                                          #>
+<# 为 Azure 上已经存在的 load balancer 添加第 n 台后端虚机         #>
+<# 说明：                                                          #>
+<# 请根据情况修改变量 vmIndex、prodNamePrefix、userName、          #>
+<# sshPublicKey 和 location 等变量的值                             #>
+<# 用法：                                                          #>
+<# 直接执行脚本 .\azureloadbalancer_addvm.ps1                      #>
 <#-----------------------------------------------------------------#>
 
+#*******************************************************************#
+# 定义脚本中所需的变量
+#*******************************************************************#
+
+# 新添加的虚机索引
 $vmIndex = "3"
+# 资源名称的前缀
 $prodNamePrefix = "Nick"
 $lowerProdNamePrefix = $prodNamePrefix.ToLower()
 
@@ -14,13 +23,16 @@ $userName = "nick"
 # vm user public key
 $sshPublicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCzO/q7SCCTdPou/Pj/IYyUXk1f1gQ5yhc1werRvivcSRDCnGPXnF3VaiuLdmXsbPscZBQ83wAs2rMZ8zEMDsSO+OGJcuQdJd7yuCfhwQ7ugasmhJ9PhxGK865HBY9iMJBE1cVyA6pZ2bKRLlNB375UB4NoFJkc4Nxsvpl0RunfD+YjupGDeFGrgGklgZAqb/DXY+zzvEIW6VUdWTpRYmP5DV6/hF4pBDB+ItA+eYi8BqJr8OSW/QUZsTe/9edOM1acHQi0HdZWpwSNT3xR75D4gGGdQOtRoj+EdapZtW3oUdkce3zKVWiMHq1dK601Lzz5UUU+VNRp4aKWP7AWHxp/ nick@u16os"
 
-
+# resource loacation
 $location = "japaneast"
+# resource group name
 $rgName = $prodNamePrefix + "LBGroup"
+# virtual network infomation
 $vnetName = $prodNamePrefix + "LBVNet"
 $vnetPrefix = "10.0.0.0/16"
 $subnetName = $prodNamePrefix + "LBSubNet"
 $subnetPrefix = "10.0.0.0/24"
+# load balancer name
 $lbName = $prodNamePrefix + "LoadBalancer"
 
 # Load Balancer Frontend 配置的名称
@@ -51,6 +63,7 @@ $vmxDiskName = $prodNamePrefix + "LBVM" + $vmIndex + "_OsDisk"
 $storageAccountTypeName = "Standard_LRS"
 $vmxComputerHostName = $lowerProdNamePrefix + "lbvm" + $vmIndex
 $frontendPort = $vmIndex + "0022"
+
 
 #*******************************************************************#
 # 获取虚拟网络及其虚拟子网的实例
