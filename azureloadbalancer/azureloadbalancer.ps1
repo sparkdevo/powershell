@@ -111,10 +111,10 @@ $vnet = New-AzureRmvirtualNetwork -Name $vnetName `
 $publicIPv4 = New-AzureRmPublicIpAddress `
               -Name $publicIpv4Name `
               -ResourceGroupName $rgName `
-			  -Location $location `
-			  -AllocationMethod Static `
-			  -IpAddressVersion IPv4 `
-			  -DomainNameLabel $dnsLabelv4
+              -Location $location `
+              -AllocationMethod Static `
+              -IpAddressVersion IPv4 `
+              -DomainNameLabel $dnsLabelv4
 $publicIPv6 = New-AzureRmPublicIpAddress `
               -Name $publicIpv6Name `
 			  -ResourceGroupName $rgName `
