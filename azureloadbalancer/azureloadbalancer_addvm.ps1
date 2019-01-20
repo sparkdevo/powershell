@@ -1,27 +1,27 @@
 <#-----------------------------------------------------------------#>
-<# ¹¦ÄÜ£º                                                          #>
-<# Îª Azure ÉÏÒÑ¾­´æÔÚµÄ load balancer Ìí¼ÓµÚ n Ì¨ºó¶ËĞé»ú         #>
-<# ËµÃ÷£º                                                          #>
-<# Çë¸ù¾İÇé¿öĞŞ¸Ä±äÁ¿ vmIndex¡¢prodNamePrefix¡¢userName¡¢          #>
-<# sshPublicKey ºÍ location µÈ±äÁ¿µÄÖµ                             #>
-<# ÓÃ·¨£º                                                          #>
-<# Ö±½ÓÖ´ĞĞ½Å±¾ .\azureloadbalancer_addvm.ps1                      #>
+<# åŠŸèƒ½ï¼š                                                          #>
+<# ä¸º Azure ä¸Šå·²ç»å­˜åœ¨çš„ load balancer æ·»åŠ ç¬¬ n å°åç«¯è™šæœº         #>
+<# è¯´æ˜ï¼š                                                          #>
+<# è¯·æ ¹æ®æƒ…å†µä¿®æ”¹å˜é‡ vmIndexã€prodNamePrefixã€userNameã€          #>
+<# sshPublicKey å’Œ location ç­‰å˜é‡çš„å€¼                             #>
+<# ç”¨æ³•ï¼š                                                          #>
+<# ç›´æ¥æ‰§è¡Œè„šæœ¬ .\azureloadbalancer_addvm.ps1                      #>
 <#-----------------------------------------------------------------#>
 
 #*******************************************************************#
-# ¶¨Òå½Å±¾ÖĞËùĞèµÄ±äÁ¿
+# å®šä¹‰è„šæœ¬ä¸­æ‰€éœ€çš„å˜é‡
 #*******************************************************************#
 
-# ĞÂÌí¼ÓµÄĞé»úË÷Òı
+# æ–°æ·»åŠ çš„è™šæœºç´¢å¼•
 $vmIndex = "3"
-# ×ÊÔ´Ãû³ÆµÄÇ°×º
+# èµ„æºåç§°çš„å‰ç¼€
 $prodNamePrefix = "Nick"
 $lowerProdNamePrefix = $prodNamePrefix.ToLower()
 
 # vm user name
 $userName = "nick"
 # vm user public key
-$sshPublicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCzO/q7SCCTdPou/Pj/IYyUXk1f1gQ5yhc1werRvivcSRDCnGPXnF3VaiuLdmXsbPscZBQ83wAs2rMZ8zEMDsSO+OGJcuQdJd7yuCfhwQ7ugasmhJ9PhxGK865HBY9iMJBE1cVyA6pZ2bKRLlNB375UB4NoFJkc4Nxsvpl0RunfD+YjupGDeFGrgGklgZAqb/DXY+zzvEIW6VUdWTpRYmP5DV6/hF4pBDB+ItA+eYi8BqJr8OSW/QUZsTe/9edOM1acHQi0HdZWpwSNT3xR75D4gGGdQOtRoj+EdapZtW3oUdkce3zKVWiMHq1dK601Lzz5UUU+VNRp4aKWP7AWHxp/ nick@u16os"
+$sshPublicKey = "your public key"
 
 # resource loacation
 $location = "japaneast"
@@ -35,24 +35,24 @@ $subnetPrefix = "10.0.0.0/24"
 # load balancer name
 $lbName = $prodNamePrefix + "LoadBalancer"
 
-# Load Balancer Frontend ÅäÖÃµÄÃû³Æ
+# Load Balancer Frontend é…ç½®çš„åç§°
 $frontendV4Name = "LBFrontendIPv4"
 $frontendV6Name = "LBFrontendIPv6"
 
-# Load Balancer Backend Poll ÅäÖÃµÄÃû³Æ
+# Load Balancer Backend Poll é…ç½®çš„åç§°
 $backendAddressPoolV4Name = "LBBackendPoolIPv4"
 $backendAddressPoolV6Name = "LBBackendPoolIPv6"
 
-# Load Balancer Inbound NAT rules ÅäÖÃÃû³ÆµÄÇ°×º
+# Load Balancer Inbound NAT rules é…ç½®åç§°çš„å‰ç¼€
 $natRulexV4Name = "NatRule-SSH-VM" + $vmIndex
 
-# Availability Set Ãû³Æ
+# Availability Set åç§°
 $availabilitySetName = $prodNamePrefix + "LBAvailabilitySet"
 
-# ĞéÄâÍø¿¨µÄÃû³Æ
+# è™šæ‹Ÿç½‘å¡çš„åç§°
 $nicxName = $prodNamePrefix + "IPv4IPv6Nic" + $vmIndex
 
-# Ğé»úÅäÖÃ
+# è™šæœºé…ç½®
 $vmSize = "Standard_B2s"
 $vmVersion = "18.04-LTS"
 #$userName = "nick"
@@ -66,46 +66,46 @@ $frontendPort = $vmIndex + "0022"
 
 
 #*******************************************************************#
-# »ñÈ¡ĞéÄâÍøÂç¼°ÆäĞéÄâ×ÓÍøµÄÊµÀı
+# è·å–è™šæ‹Ÿç½‘ç»œåŠå…¶è™šæ‹Ÿå­ç½‘çš„å®ä¾‹
 #*******************************************************************#
 
-# »ñÈ¡ĞéÄâÍøÂçµÄÊµÀı
+# è·å–è™šæ‹Ÿç½‘ç»œçš„å®ä¾‹
 $vnet = Get-AzureRmVirtualNetwork -Name $vnetName -ResourceGroupName $rgName
-# »ñÈ¡ĞéÄâ×ÓÍøµÄÊµÀı
+# è·å–è™šæ‹Ÿå­ç½‘çš„å®ä¾‹
 $backendSubnet = Get-AzureRmVirtualNetworkSubnetConfig -Name $subnetName -VirtualNetwork $vnet
 
 
 #*******************************************************************#
-# »ñÈ¡ Load Balancer ¼°Æä×ÓÊôĞÔµÄÊµÀı
+# è·å– Load Balancer åŠå…¶å­å±æ€§çš„å®ä¾‹
 #*******************************************************************#
 $loadbalancer = Get-AzureRmLoadBalancer -Name $lbName -ResourceGroupName $rgName
 
-# »ñÈ¡ Load Balancer µÄ Backend pools ÊµÀı
+# è·å– Load Balancer çš„ Backend pools å®ä¾‹
 $backendpoolipv4 = Get-AzureRmLoadBalancerBackendAddressPoolConfig -Name $backendAddressPoolV4Name -LoadBalancer $loadbalancer
 $backendpoolipv6 = Get-AzureRmLoadBalancerBackendAddressPoolConfig -Name $backendAddressPoolV6Name -LoadBalancer $loadbalancer
 
-# »ñÈ¡ Load Balancer µÄ Frontend IP ÊµÀı
+# è·å– Load Balancer çš„ Frontend IP å®ä¾‹
 $FEIPConfigv4 = Get-AzureRmLoadBalancerFrontendIpConfig -Name $frontendV4Name -LoadBalancer $loadbalancer
 $FEIPConfigv6 = Get-AzureRmLoadBalancerFrontendIpConfig -Name $frontendV6Name -LoadBalancer $loadbalancer
 
-# ÔÚ Load Balancer ÊµÀıÖĞÌí¼ÓĞÂµÄ Inbound NAT rule
+# åœ¨ Load Balancer å®ä¾‹ä¸­æ·»åŠ æ–°çš„ Inbound NAT rule
 $loadbalancer | Add-AzureRmLoadBalancerInboundNatRuleConfig -Name $natRulexV4Name -FrontendIPConfiguration $FEIPConfigv4 -Protocol TCP -FrontendPort $frontendPort -BackendPort 22
 
 
 #*******************************************************************#
-# ÔÚÔÆ¶Ë¸üĞÂ Load Balancer ÊµÀı
+# åœ¨äº‘ç«¯æ›´æ–° Load Balancer å®ä¾‹
 #*******************************************************************#
 
-# ÔÚÔÆ¶Ë¸üĞÂ Load Balancer ÊµÀı
+# åœ¨äº‘ç«¯æ›´æ–° Load Balancer å®ä¾‹
 $loadbalancer | Set-AzureRmLoadBalancer
 
-# »ñµÃ¸üĞÂºóµÄ Load Balancer ÊµÀı
+# è·å¾—æ›´æ–°åçš„ Load Balancer å®ä¾‹
 $loadbalancer = Get-AzureRmLoadBalancer -Name $lbName -ResourceGroupName $rgName
 $inboundNATRulev4 = Get-AzureRmLoadBalancerInboundNatRuleConfig -Name $natRulexV4Name -LoadBalancer $loadbalancer
 
 
 #*******************************************************************#
-# ´´½¨ĞéÄâÍø¿¨
+# åˆ›å»ºè™šæ‹Ÿç½‘å¡
 #*******************************************************************#
 $nicIPv4 = New-AzureRmNetworkInterfaceIpConfig -Name "IPv4IPConfig" -PrivateIpAddressVersion "IPv4" -Subnet $backendSubnet -LoadBalancerBackendAddressPool $backendpoolipv4 -LoadBalancerInboundNatRule $inboundNATRulev4
 $nicIPv6 = New-AzureRmNetworkInterfaceIpConfig -Name "IPv6IPConfig" -PrivateIpAddressVersion "IPv6" -LoadBalancerBackendAddressPool $backendpoolipv6
@@ -113,17 +113,17 @@ $nic = New-AzureRmNetworkInterface -Name $nicxName -IpConfiguration $nicIPv4,$ni
 
 
 #*******************************************************************#
-# ´´½¨ĞéÄâ»ú²¢·ÖÅäĞÂ½¨µÄ NIC
+# åˆ›å»ºè™šæ‹Ÿæœºå¹¶åˆ†é…æ–°å»ºçš„ NIC
 #*******************************************************************#
 
-# »ñÈ¡ Availability Set
+# è·å– Availability Set
 $availabilitySet = Get-AzureRmAvailabilitySet -Name $availabilitySetName -ResourceGroupName $rgName
 
-# ´´½¨ÓÃ»§ Credential
+# åˆ›å»ºç”¨æˆ· Credential
 $securePassword = ConvertTo-SecureString $userPassword -AsPlainText -Force
 $userCred = New-Object System.Management.Automation.PSCredential ($userName, $securePassword)
 
-# ´´½¨Ğé»ú
+# åˆ›å»ºè™šæœº
 $vm = New-AzureRmVMConfig -VMName $vmxName -VMSize $vmSize -AvailabilitySetId $availabilitySet.Id
 $vm = Set-AzureRmVMOperatingSystem -VM $vm -Linux -ComputerName $vmxComputerHostName -Credential $userCred -DisablePasswordAuthentication
 $vm = Set-AzureRmVMSourceImage -VM $vm -PublisherName Canonical -Offer UbuntuServer -Skus $vmVersion -Version "latest"
