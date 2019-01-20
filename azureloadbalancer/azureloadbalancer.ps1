@@ -117,19 +117,19 @@ $publicIPv4 = New-AzureRmPublicIpAddress `
               -DomainNameLabel $dnsLabelv4
 $publicIPv6 = New-AzureRmPublicIpAddress `
               -Name $publicIpv6Name `
-			  -ResourceGroupName $rgName `
-			  -Location $location `
-			  -AllocationMethod Dynamic `
-			  -IpAddressVersion IPv6 `
-			  -DomainNameLabel $dnsLabelv6
+              -ResourceGroupName $rgName `
+              -Location $location `
+              -AllocationMethod Dynamic `
+              -IpAddressVersion IPv6 `
+              -DomainNameLabel $dnsLabelv6
 
 # 创建 Load Balancer 的 Frontend IP
 $FEIPConfigv4 = New-AzureRmLoadBalancerFrontendIpConfig `
                 -Name $frontendV4Name `
-				-PublicIpAddress $publicIPv4
+                -PublicIpAddress $publicIPv4
 $FEIPConfigv6 = New-AzureRmLoadBalancerFrontendIpConfig `
                 -Name $frontendV6Name `
-				-PublicIpAddress $publicIPv6
+                -PublicIpAddress $publicIPv6
 
 # 创建 Load Balancer 的 Backend pools
 $backendpoolipv4 = New-AzureRmLoadBalancerBackendAddressPoolConfig `
@@ -140,69 +140,69 @@ $backendpoolipv6 = New-AzureRmLoadBalancerBackendAddressPoolConfig `
 # 创建 Load Balancer 的 Inbound NAT rules
 $inboundNATRule1v4 = New-AzureRmLoadBalancerInboundNatRuleConfig `
                      -Name $natRule1V4Name `
-					 -FrontendIpConfiguration $FEIPConfigv4 `
-					 -Protocol TCP `
-					 -FrontendPort 10022 `
-					 -BackendPort 22
+                     -FrontendIpConfiguration $FEIPConfigv4 `
+                     -Protocol TCP `
+                     -FrontendPort 10022 `
+                     -BackendPort 22
 $inboundNATRule2v4 = New-AzureRmLoadBalancerInboundNatRuleConfig `
                      -Name $natRule2V4Name `
-					 -FrontendIpConfiguration $FEIPConfigv4 `
-					 -Protocol TCP `
-					 -FrontendPort 20022 `
-					 -BackendPort 22
+                     -FrontendIpConfiguration $FEIPConfigv4 `
+                     -Protocol TCP `
+                     -FrontendPort 20022 `
+                     -BackendPort 22
 
 # 创建 Load Balancer 的 Health probes
 $healthProbe = New-AzureRmLoadBalancerProbeConfig -Name $probeV4V6Name `
                                                   -Protocol Tcp `
-												  -Port 22 `
-												  -IntervalInSeconds 15 `
-												  -ProbeCount 2
+                                                  -Port 22 `
+                                                  -IntervalInSeconds 15 `
+                                                  -ProbeCount 2
 
 # 创建 Load Balancer 的 Load balancing rules
 $lbrule1v4http = New-AzureRmLoadBalancerRuleConfig `
                  -Name $lbRule1V4HTTPName `
-				 -FrontendIpConfiguration $FEIPConfigv4 `
-				 -BackendAddressPool $backendpoolipv4 `
-				 -Probe $healthProbe `
-				 -Protocol Tcp `
-				 -FrontendPort 80 `
-				 -BackendPort 80
+                 -FrontendIpConfiguration $FEIPConfigv4 `
+                 -BackendAddressPool $backendpoolipv4 `
+                 -Probe $healthProbe `
+                 -Protocol Tcp `
+                 -FrontendPort 80 `
+                 -BackendPort 80
 $lbrule1v6http = New-AzureRmLoadBalancerRuleConfig `
                  -Name $lbRule1V6HTTPName `
-				 -FrontendIpConfiguration $FEIPConfigv6 `
-				 -BackendAddressPool $backendpoolipv6 `
-				 -Probe $healthProbe `
-				 -Protocol Tcp `
-				 -FrontendPort 80 `
-				 -BackendPort 80
+                 -FrontendIpConfiguration $FEIPConfigv6 `
+                 -BackendAddressPool $backendpoolipv6 `
+                 -Probe $healthProbe `
+                 -Protocol Tcp `
+                 -FrontendPort 80 `
+                 -BackendPort 80
 $lbrule1v4https = New-AzureRmLoadBalancerRuleConfig `
                   -Name $lbRule1V4HTTPSName `
-				  -FrontendIpConfiguration $FEIPConfigv4 `
-				  -BackendAddressPool $backendpoolipv4 `
-				  -Probe $healthProbe `
-				  -Protocol Tcp `
-				  -FrontendPort 443 `
-				  -BackendPort 443
+                  -FrontendIpConfiguration $FEIPConfigv4 `
+                  -BackendAddressPool $backendpoolipv4 `
+                  -Probe $healthProbe `
+                  -Protocol Tcp `
+                  -FrontendPort 443 `
+                  -BackendPort 443
 $lbrule1v6https = New-AzureRmLoadBalancerRuleConfig `
                   -Name $lbRule1V6HTTPSName `
-				  -FrontendIpConfiguration $FEIPConfigv6 `
-				  -BackendAddressPool $backendpoolipv6 `
-				  -Probe $healthProbe `
-				  -Protocol Tcp `
-				  -FrontendPort 443 `
-				  -BackendPort 443
+                  -FrontendIpConfiguration $FEIPConfigv6 `
+                  -BackendAddressPool $backendpoolipv6 `
+                  -Probe $healthProbe `
+                  -Protocol Tcp `
+                  -FrontendPort 443 `
+                  -BackendPort 443
 
 # 创建 Load Balancer
 $loadbalancer = New-AzureRmLoadBalancer `
                 -ResourceGroupName $rgName `
-				-Name $lbName `
-				-Location $location `
-				-FrontendIpConfiguration $FEIPConfigv4,$FEIPConfigv6 `
-				-InboundNatRule $inboundNATRule2v4,$inboundNATRule1v4 `
-				-BackendAddressPool $backendpoolipv4,$backendpoolipv6 `
-				-Probe $healthProbe `
-				-LoadBalancingRule $lbrule1v4http,$lbrule1v6http,`
-				$lbrule1v4https,$lbrule1v6https
+                -Name $lbName `
+                -Location $location `
+                -FrontendIpConfiguration $FEIPConfigv4,$FEIPConfigv6 `
+                -InboundNatRule $inboundNATRule2v4,$inboundNATRule1v4 `
+                -BackendAddressPool $backendpoolipv4,$backendpoolipv6 `
+                -Probe $healthProbe `
+                -LoadBalancingRule $lbrule1v4http,$lbrule1v6http,`
+                $lbrule1v4https,$lbrule1v6https
 
 
 #*******************************************************************#
@@ -215,39 +215,39 @@ $vnet = Get-AzureRmVirtualNetwork -Name $vnetName `
                                   -ResourceGroupName $rgName
 $backendSubnet = Get-AzureRmVirtualNetworkSubnetConfig `
                  -Name $subnetName `
-				 -VirtualNetwork $vnet
+                 -VirtualNetwork $vnet
 
 $nic1IPv4 = New-AzureRmNetworkInterfaceIpConfig `
             -Name "IPv4IPConfig" `
-			-PrivateIpAddressVersion "IPv4" `
-			-Subnet $backendSubnet `
-			-LoadBalancerBackendAddressPool $backendpoolipv4 `
-			-LoadBalancerInboundNatRule $inboundNATRule1v4
+            -PrivateIpAddressVersion "IPv4" `
+            -Subnet $backendSubnet `
+            -LoadBalancerBackendAddressPool $backendpoolipv4 `
+            -LoadBalancerInboundNatRule $inboundNATRule1v4
 $nic1IPv6 = New-AzureRmNetworkInterfaceIpConfig `
             -Name "IPv6IPConfig" `
-			-PrivateIpAddressVersion "IPv6" `
-			-LoadBalancerBackendAddressPool $backendpoolipv6
+            -PrivateIpAddressVersion "IPv6" `
+            -LoadBalancerBackendAddressPool $backendpoolipv6
 $nic1 = New-AzureRmNetworkInterface `
         -Name $nic1Name `
-		-IpConfiguration $nic1IPv4,$nic1IPv6 `
-		-ResourceGroupName $rgName `
-		-Location $location
+        -IpConfiguration $nic1IPv4,$nic1IPv6 `
+        -ResourceGroupName $rgName `
+        -Location $location
 
 $nic2IPv4 = New-AzureRmNetworkInterfaceIpConfig `
             -Name "IPv4IPConfig" `
-			-PrivateIpAddressVersion "IPv4" `
-			-Subnet $backendSubnet `
-			-LoadBalancerBackendAddressPool $backendpoolipv4 `
-			-LoadBalancerInboundNatRule $inboundNATRule2v4
+            -PrivateIpAddressVersion "IPv4" `
+            -Subnet $backendSubnet `
+            -LoadBalancerBackendAddressPool $backendpoolipv4 `
+            -LoadBalancerInboundNatRule $inboundNATRule2v4
 $nic2IPv6 = New-AzureRmNetworkInterfaceIpConfig `
             -Name "IPv6IPConfig" `
-			-PrivateIpAddressVersion "IPv6" `
-			-LoadBalancerBackendAddressPool $backendpoolipv6
+            -PrivateIpAddressVersion "IPv6" `
+            -LoadBalancerBackendAddressPool $backendpoolipv6
 $nic2 = New-AzureRmNetworkInterface `
         -Name $nic2Name `
-		-IpConfiguration $nic2IPv4,$nic2IPv6 `
-		-ResourceGroupName $rgName `
-		-Location $location
+        -IpConfiguration $nic2IPv4,$nic2IPv6 `
+        -ResourceGroupName $rgName `
+        -Location $location
 
 
 #*******************************************************************#
@@ -257,13 +257,13 @@ $nic2 = New-AzureRmNetworkInterface `
 # 创建 Availability Set
 New-AzureRmAvailabilitySet -Name $availabilitySetName `
                            -Sku Aligned `
-						   -PlatformFaultDomainCount 2 `
-						   -PlatformUpdateDomainCount 5 `
-						   -ResourceGroupName $rgName `
-						   -location $location
+                           -PlatformFaultDomainCount 2 `
+                           -PlatformUpdateDomainCount 5 `
+                           -ResourceGroupName $rgName `
+                           -location $location
 $availabilitySet = Get-AzureRmAvailabilitySet `
                    -Name $availabilitySetName `
-				   -ResourceGroupName $rgName
+                   -ResourceGroupName $rgName
 
 # 创建用户 Credential
 $securePassword = ConvertTo-SecureString $userPassword `
@@ -274,73 +274,73 @@ $userCred = New-Object System.Management.Automation.PSCredential `
 # 创建第一台虚机
 $vm1 = New-AzureRmVMConfig -VMName $vm1Name `
                            -VMSize $vmSize `
-						   -AvailabilitySetId $availabilitySet.Id
+                           -AvailabilitySetId $availabilitySet.Id
 $vm1 = Set-AzureRmVMOperatingSystem `
        -VM $vm1 `
        -Linux `
-	   -ComputerName $vm1ComputerHostName `
-	   -Credential $userCred `
-	   -DisablePasswordAuthentication
+       -ComputerName $vm1ComputerHostName `
+       -Credential $userCred `
+       -DisablePasswordAuthentication
 $vm1 = Set-AzureRmVMSourceImage `
        -VM $vm1 `
-	   -PublisherName Canonical `
-	   -Offer UbuntuServer `
-	   -Skus $vmVersion `
-	   -Version "latest"
+       -PublisherName Canonical `
+       -Offer UbuntuServer `
+       -Skus $vmVersion `
+       -Version "latest"
 $vm1 = Set-AzureRmVMBootDiagnostics `
        -VM $vm1 `
-	   -Disable
+       -Disable
 $vm1 = Add-AzureRmVMNetworkInterface `
        -VM $vm1 `
-	   -Id $nic1.Id `
-	   -Primary
+       -Id $nic1.Id `
+       -Primary
 $vm1 = Set-AzureRmVMOSDisk `
        -VM $vm1 `
-	   -Name $vm1DiskName `
-	   -CreateOption FromImage `
-	   -StorageAccountType $storageAccountTypeName
+       -Name $vm1DiskName `
+       -CreateOption FromImage `
+       -StorageAccountType $storageAccountTypeName
 Add-AzureRmVMSshPublicKey `
     -VM $vm1 `
     -KeyData $sshPublicKey `
-	-Path "/home/$userName/.ssh/authorized_keys"
+    -Path "/home/$userName/.ssh/authorized_keys"
 New-AzureRmVM -ResourceGroupName $rgName `
               -Location $location `
-			  -VM $vm1
+              -VM $vm1
 
 # 创建第二台虚机
 $vm2 = New-AzureRmVMConfig -VMName $vm2Name `
                            -VMSize $vmSize `
-						   -AvailabilitySetId $availabilitySet.Id
+                           -AvailabilitySetId $availabilitySet.Id
 $vm2 = Set-AzureRmVMOperatingSystem `
        -VM $vm2 `
-	   -Linux `
-	   -ComputerName $vm2ComputerHostName `
-	   -Credential $userCred `
-	   -DisablePasswordAuthentication
+       -Linux `
+       -ComputerName $vm2ComputerHostName `
+       -Credential $userCred `
+       -DisablePasswordAuthentication
 $vm2 = Set-AzureRmVMSourceImage `
        -VM $vm2 `
-	   -PublisherName Canonical `
-	   -Offer UbuntuServer `
-	   -Skus $vmVersion `
-	   -Version "latest"
+       -PublisherName Canonical `
+       -Offer UbuntuServer `
+       -Skus $vmVersion `
+       -Version "latest"
 $vm2 = Set-AzureRmVMBootDiagnostics `
        -VM $vm2 `
-	   -Disable
+       -Disable
 $vm2 = Add-AzureRmVMNetworkInterface `
        -VM $vm2 `
-	   -Id $nic2.Id `
-	   -Primary
+       -Id $nic2.Id `
+       -Primary
 $vm2 = Set-AzureRmVMOSDisk `
        -VM $vm2 `
-	   -Name $vm2DiskName `
-	   -CreateOption FromImage `
-	   -StorageAccountType $storageAccountTypeName
+       -Name $vm2DiskName `
+       -CreateOption FromImage `
+       -StorageAccountType $storageAccountTypeName
 Add-AzureRmVMSshPublicKey `
     -VM $vm2 `
-	-KeyData $sshPublicKey `
-	-Path "/home/$userName/.ssh/authorized_keys"
+    -KeyData $sshPublicKey `
+    -Path "/home/$userName/.ssh/authorized_keys"
 New-AzureRmVM -ResourceGroupName $rgName `
               -Location $location `
-			  -VM $vm2
+              -VM $vm2
 
 Write-Host "The creation of Load Balancer is completed."
