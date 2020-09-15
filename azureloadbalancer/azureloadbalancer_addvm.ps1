@@ -17,14 +17,15 @@ $vmIndex = "3"
 # 资源名称的前缀
 $prodNamePrefix = "Nick"
 $lowerProdNamePrefix = $prodNamePrefix.ToLower()
-
+$vmSize = "Standard_B2ms"
+$location = "japaneast"
 # vm user name
 $userName = "nick"
 # vm user public key
-$sshPublicKey = "your public key"
+$sshPublicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCzO/q7SCCTdPou/Pj/IYyUXk1f1gQ5yhc1werRvivcSRDCnGPXnF3VaiuLdmXsbPscZBQ83wAs2rMZ8zEMDsSO+OGJcuQdJd7yuCfhwQ7ugasmhJ9PhxGK865HBY9iMJBE1cVyA6pZ2bKRLlNB375UB4NoFJkc4Nxsvpl0RunfD+YjupGDeFGrgGklgZAqb/DXY+zzvEIW6VUdWTpRYmP5DV6/hF4pBDB+ItA+eYi8BqJr8OSW/QUZsTe/9edOM1acHQi0HdZWpwSNT3xR75D4gGGdQOtRoj+EdapZtW3oUdkce3zKVWiMHq1dK601Lzz5UUU+VNRp4aKWP7AWHxp/ nick@u16os"
 
 # resource loacation
-$location = "japaneast"
+#$location = "japaneast"
 # resource group name
 $rgName = $prodNamePrefix + "LBGroup"
 # virtual network infomation
@@ -53,7 +54,7 @@ $availabilitySetName = $prodNamePrefix + "LBAvailabilitySet"
 $nicxName = $prodNamePrefix + "IPv4IPv6Nic" + $vmIndex
 
 # 虚机配置
-$vmSize = "Standard_B2s"
+#$vmSize = "Standard_B2s"
 $vmVersion = "18.04-LTS"
 #$userName = "nick"
 $userPassword = "123456"
